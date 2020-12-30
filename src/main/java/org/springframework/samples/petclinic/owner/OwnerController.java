@@ -46,7 +46,7 @@ class OwnerController {
 	private VisitRepository visits;
 
 	// 도댈체 이 Constructor는... 프로젝트 어디서도 Controller를 생성하는 코드가 없는데...어떻게 실행되는 걸까???
-	// 이 Constructor가 실행되지 않는다면, 뒤에 나오는 this.owners.save(..)와 같은 코드에서 NullPtr exception이 발생한다...
+	// 이 Constructor가 실행되지 않는다면, 뒤에 나오는 this.owners.save(..)와 같은 코드에서 NullPtr exception이 발생한다!
 	public OwnerController(OwnerRepository clinicService, VisitRepository visits) {
 		this.owners = clinicService;
 		this.visits = visits;
