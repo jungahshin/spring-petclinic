@@ -82,18 +82,18 @@ class ClinicServiceTests {
 	protected VetRepository vets;
 
 	@Test
-	void shouldFindOwnersByLastName() {
-		Collection<Owner> owners = this.owners.findByLastName("Davis");
+	void shouldFindOwnersByFirstName() {
+		Collection<Owner> owners = this.owners.findByFirstName("Davis");
 		assertThat(owners).hasSize(2);
 
-		owners = this.owners.findByLastName("Daviss");
+		owners = this.owners.findByFirstName("Daviss");
 		assertThat(owners).isEmpty();
 	}
 
 	@Test
 	void shouldFindSingleOwnerWithPet() {
 		Owner owner = this.owners.findById(1);
-		assertThat(owner.getLastName()).startsWith("Franklin");
+		assertThat(owner.getFirstName()).startsWith("Franklin");
 		assertThat(owner.getPets()).hasSize(1);
 		assertThat(owner.getPets().get(0).getType()).isNotNull();
 		assertThat(owner.getPets().get(0).getType().getName()).isEqualTo("cat");
@@ -102,7 +102,7 @@ class ClinicServiceTests {
 	@Test
 	@Transactional
 	void shouldInsertOwner() {
-		Collection<Owner> owners = this.owners.findByLastName("Schultz");
+		Collection<Owner> owners = this.owners.findByFirstName("Schultz");
 		int found = owners.size();
 
 		Owner owner = new Owner();
@@ -110,11 +110,12 @@ class ClinicServiceTests {
 		owner.setLastName("Schultz");
 		owner.setAddress("4, Evans Street");
 		owner.setCity("Wollongong");
+		owner.setAge("25");
 		owner.setTelephone("4444444444");
 		this.owners.save(owner);
 		assertThat(owner.getId().longValue()).isNotEqualTo(0);
 
-		owners = this.owners.findByLastName("Schultz");
+		owners = this.owners.findByFirstName("Schultz");
 		assertThat(owners.size()).isEqualTo(found + 1);
 	}
 
@@ -122,15 +123,15 @@ class ClinicServiceTests {
 	@Transactional
 	void shouldUpdateOwner() {
 		Owner owner = this.owners.findById(1);
-		String oldLastName = owner.getLastName();
-		String newLastName = oldLastName + "X";
+		String oldFirstName = owner.getFirstName();
+		String newFirstName = oldFirstName + "X";
 
-		owner.setLastName(newLastName);
+		owner.setFirstName(newFirstName);
 		this.owners.save(owner);
 
 		// retrieving new name from database
 		owner = this.owners.findById(1);
-		assertThat(owner.getLastName()).isEqualTo(newLastName);
+		assertThat(owner.getFirstName()).isEqualTo(newFirstName);
 	}
 
 	@Test
@@ -193,7 +194,7 @@ class ClinicServiceTests {
 		Collection<Vet> vets = this.vets.findAll();
 
 		Vet vet = EntityUtils.getById(vets, Vet.class, 3);
-		assertThat(vet.getLastName()).isEqualTo("Douglas");
+		assertThat(vet.getFirstName()).isEqualTo("Douglas");
 		assertThat(vet.getNrOfSpecialties()).isEqualTo(2);
 		assertThat(vet.getSpecialties().get(0).getName()).isEqualTo("dentistry");
 		assertThat(vet.getSpecialties().get(1).getName()).isEqualTo("surgery");

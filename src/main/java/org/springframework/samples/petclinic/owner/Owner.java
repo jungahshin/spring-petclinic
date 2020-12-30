@@ -54,6 +54,10 @@ public class Owner extends Person {
 	@NotEmpty
 	private String city;
 
+	@Column(name = "age")
+	@NotEmpty
+	private String age;
+
 	@Column(name = "telephone")
 	@NotEmpty
 	@Digits(fraction = 0, integer = 10)
@@ -77,6 +81,10 @@ public class Owner extends Person {
 	public void setCity(String city) {
 		this.city = city;
 	}
+
+	public String getAge() { return this.age; }
+
+	public void setAge(String age) { this.age = age; }
 
 	public String getTelephone() {
 		return this.telephone;
@@ -143,7 +151,7 @@ public class Owner extends Person {
 		return new ToStringCreator(this)
 
 				.append("id", this.getId()).append("new", this.isNew()).append("lastName", this.getLastName())
-				.append("firstName", this.getFirstName()).append("address", this.address).append("city", this.city)
+				.append("firstName", this.getFirstName()).append("address", this.address).append("city", this.city).append("age", this.age)
 				.append("telephone", this.telephone).toString();
 	}
 

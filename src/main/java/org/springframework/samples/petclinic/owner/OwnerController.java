@@ -45,6 +45,8 @@ class OwnerController {
 
 	private VisitRepository visits;
 
+	// 도댈체 이 Constructor는... 프로젝트 어디서도 Controller를 생성하는 코드가 없는데...어떻게 실행되는 걸까???
+	// 이 Constructor가 실행되지 않는다면, 뒤에 나오는 this.owners.save(..)와 같은 코드에서 NullPtr exception이 발생한다...
 	public OwnerController(OwnerRepository clinicService, VisitRepository visits) {
 		this.owners = clinicService;
 		this.visits = visits;
@@ -83,15 +85,15 @@ class OwnerController {
 	public String processFindForm(Owner owner, BindingResult result, Map<String, Object> model) {
 
 		// allow parameterless GET request for /owners to return all records
-		if (owner.getLastName() == null) {
-			owner.setLastName(""); // empty string signifies broadest possible search
+		if (owner.getFirstName() == null) {
+			owner.setFirstName(""); // empty string signifies broadest possible search
 		}
 
-		// find owners by last name
-		Collection<Owner> results = this.owners.findByLastName(owner.getLastName());
+		// find owners by first name
+		Collection<Owner> results = this.owners.findByFirstName(owner.getFirstName());
 		if (results.isEmpty()) {
 			// no owners found
-			result.rejectValue("lastName", "notFound", "not found");
+			result.rejectValue("firstName", "notFound", "not found");
 			return "owners/findOwners";
 		}
 		else if (results.size() == 1) {

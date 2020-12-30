@@ -72,6 +72,7 @@ class OwnerControllerTests {
 		george.setLastName("Franklin");
 		george.setAddress("110 W. Liberty St.");
 		george.setCity("Madison");
+		george.setAge("25");
 		george.setTelephone("6085551023");
 		Pet max = new Pet();
 		PetType dog = new PetType();
@@ -95,15 +96,15 @@ class OwnerControllerTests {
 
 	@Test
 	void testProcessCreationFormSuccess() throws Exception {
-		mockMvc.perform(post("/owners/new").param("firstName", "Joe").param("lastName", "Bloggs")
-				.param("address", "123 Caramel Street").param("city", "London").param("telephone", "01316761638"))
+		mockMvc.perform(post("/owners/new").param("firstName", "Joe").param("firstName", "Bloggs")
+				.param("address", "123 Caramel Street").param("city", "London").param("age", "25").param("telephone", "01316761638"))
 				.andExpect(status().is3xxRedirection());
 	}
 
 	@Test
 	void testProcessCreationFormHasErrors() throws Exception {
 		mockMvc.perform(
-				post("/owners/new").param("firstName", "Joe").param("lastName", "Bloggs").param("city", "London"))
+				post("/owners/new").param("firstName", "Joe").param("firstName", "Bloggs").param("city", "London"))
 				.andExpect(status().isOk()).andExpect(model().attributeHasErrors("owner"))
 				.andExpect(model().attributeHasFieldErrors("owner", "address"))
 				.andExpect(model().attributeHasFieldErrors("owner", "telephone"))
@@ -118,22 +119,22 @@ class OwnerControllerTests {
 
 	@Test
 	void testProcessFindFormSuccess() throws Exception {
-		given(this.owners.findByLastName("")).willReturn(Lists.newArrayList(george, new Owner()));
+		given(this.owners.findByFirstName("")).willReturn(Lists.newArrayList(george, new Owner()));
 		mockMvc.perform(get("/owners")).andExpect(status().isOk()).andExpect(view().name("owners/ownersList"));
 	}
 
 	@Test
-	void testProcessFindFormByLastName() throws Exception {
-		given(this.owners.findByLastName(george.getLastName())).willReturn(Lists.newArrayList(george));
-		mockMvc.perform(get("/owners").param("lastName", "Franklin")).andExpect(status().is3xxRedirection())
+	void testProcessFindFormByFirstName() throws Exception {
+		given(this.owners.findByFirstName(george.getFirstName())).willReturn(Lists.newArrayList(george));
+		mockMvc.perform(get("/owners").param("firstName", "Franklin")).andExpect(status().is3xxRedirection())
 				.andExpect(view().name("redirect:/owners/" + TEST_OWNER_ID));
 	}
 
 	@Test
 	void testProcessFindFormNoOwnersFound() throws Exception {
-		mockMvc.perform(get("/owners").param("lastName", "Unknown Surname")).andExpect(status().isOk())
-				.andExpect(model().attributeHasFieldErrors("owner", "lastName"))
-				.andExpect(model().attributeHasFieldErrorCode("owner", "lastName", "notFound"))
+		mockMvc.perform(get("/owners").param("firstName", "Unknown Surname")).andExpect(status().isOk())
+				.andExpect(model().attributeHasFieldErrors("owner", "firstName"))
+				.andExpect(model().attributeHasFieldErrorCode("owner", "firstName", "notFound"))
 				.andExpect(view().name("owners/findOwners"));
 	}
 
@@ -141,10 +142,11 @@ class OwnerControllerTests {
 	void testInitUpdateOwnerForm() throws Exception {
 		mockMvc.perform(get("/owners/{ownerId}/edit", TEST_OWNER_ID)).andExpect(status().isOk())
 				.andExpect(model().attributeExists("owner"))
-				.andExpect(model().attribute("owner", hasProperty("lastName", is("Franklin"))))
+				.andExpect(model().attribute("owner", hasProperty("firstName", is("Franklin"))))
 				.andExpect(model().attribute("owner", hasProperty("firstName", is("George"))))
 				.andExpect(model().attribute("owner", hasProperty("address", is("110 W. Liberty St."))))
 				.andExpect(model().attribute("owner", hasProperty("city", is("Madison"))))
+				.andExpect(model().attribute("owner", hasProperty("age", is("25"))))
 				.andExpect(model().attribute("owner", hasProperty("telephone", is("6085551023"))))
 				.andExpect(view().name("owners/createOrUpdateOwnerForm"));
 	}
@@ -152,7 +154,7 @@ class OwnerControllerTests {
 	@Test
 	void testProcessUpdateOwnerFormSuccess() throws Exception {
 		mockMvc.perform(post("/owners/{ownerId}/edit", TEST_OWNER_ID).param("firstName", "Joe")
-				.param("lastName", "Bloggs").param("address", "123 Caramel Street").param("city", "London")
+				.param("firstName", "Bloggs").param("address", "123 Caramel Street").param("city", "London").param("age", "25")
 				.param("telephone", "01616291589")).andExpect(status().is3xxRedirection())
 				.andExpect(view().name("redirect:/owners/{ownerId}"));
 	}
@@ -160,7 +162,7 @@ class OwnerControllerTests {
 	@Test
 	void testProcessUpdateOwnerFormHasErrors() throws Exception {
 		mockMvc.perform(post("/owners/{ownerId}/edit", TEST_OWNER_ID).param("firstName", "Joe")
-				.param("lastName", "Bloggs").param("city", "London")).andExpect(status().isOk())
+				.param("firstName", "Bloggs").param("city", "London").param("age", "25")).andExpect(status().isOk())
 				.andExpect(model().attributeHasErrors("owner"))
 				.andExpect(model().attributeHasFieldErrors("owner", "address"))
 				.andExpect(model().attributeHasFieldErrors("owner", "telephone"))
@@ -174,6 +176,7 @@ class OwnerControllerTests {
 				.andExpect(model().attribute("owner", hasProperty("firstName", is("George"))))
 				.andExpect(model().attribute("owner", hasProperty("address", is("110 W. Liberty St."))))
 				.andExpect(model().attribute("owner", hasProperty("city", is("Madison"))))
+				.andExpect(model().attribute("owner", hasProperty("age", is("25"))))
 				.andExpect(model().attribute("owner", hasProperty("telephone", is("6085551023"))))
 				.andExpect(model().attribute("owner", hasProperty("pets", not(empty()))))
 				.andExpect(model().attribute("owner", hasProperty("pets", new BaseMatcher<List<Pet>>() {
